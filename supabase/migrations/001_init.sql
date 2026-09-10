@@ -67,8 +67,8 @@ create table if not exists public.patient_profiles (
                   references public.profiles (id) on delete cascade,
   date_of_birth date,
   blood_group   text,
-  allergies     text[]  not null default '{}',
-  conditions    text[]  not null default '{}'
+  allergies     text[]  not null default '{}'::text[],
+  conditions    text[]  not null default '{}'::text[]
 );
 
 -- ─────────────────────────────────────────────────────────────
