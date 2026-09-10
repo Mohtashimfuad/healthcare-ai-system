@@ -9,14 +9,11 @@ import {
   Stethoscope,
   User,
   ArrowRight,
-  Clock,
   Sparkles,
   ChevronRight,
   HeartPulse,
   CheckCircle2,
   Users,
-  Building2,
-  Star,
 } from "lucide-react";
 
 export default function LandingPage() {

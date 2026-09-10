@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -28,25 +28,14 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-function LoginForm() {
+function LoginForm({ defaultRole }: { defaultRole: "patient" | "doctor" }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const initialRole = searchParams.get("role") === "doctor" ? "doctor" : "patient";
-
-  const [role, setRole] = useState<"patient" | "doctor">(initialRole);
+  const [role, setRole] = useState<"patient" | "doctor">(defaultRole);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  // Sync role if search param changes
-  useEffect(() => {
-    const r = searchParams.get("role");
-    if (r === "doctor" || r === "patient") {
-      setRole(r);
-    }
-  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,8 +68,8 @@ function LoginForm() {
           (data.user.user_metadata?.role as string) ||
           role;
 
-        // Redirect based on role or to dashboard
-        router.push("/dashboard");
+        // Redirect based on resolved role
+        router.push(userRole === "doctor" ? "/dashboard?role=doctor" : "/dashboard");
         router.refresh();
       }
     } catch (err: unknown) {
@@ -256,6 +245,14 @@ function LoginForm() {
   );
 }
 
+function LoginFormContent() {
+  const searchParams = useSearchParams();
+  const roleParam = searchParams.get("role");
+  const defaultRole: "patient" | "doctor" = roleParam === "doctor" ? "doctor" : "patient";
+
+  return <LoginForm key={roleParam || "default"} defaultRole={defaultRole} />;
+}
+
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center px-4 py-12 selection:bg-[#CCFBF1] selection:text-[#0369A1]">
@@ -266,7 +263,7 @@ export default function LoginPage() {
           </div>
         }
       >
-        <LoginForm />
+        <LoginFormContent />
       </Suspense>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -45,12 +45,10 @@ const SPECIALTIES = [
   "ENT Specialist",
 ];
 
-function RegisterForm() {
+function RegisterForm({ defaultRole }: { defaultRole: "patient" | "doctor" }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const initialRole = searchParams.get("role") === "doctor" ? "doctor" : "patient";
 
-  const [role, setRole] = useState<"patient" | "doctor">(initialRole);
+  const [role, setRole] = useState<"patient" | "doctor">(defaultRole);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -61,14 +59,6 @@ function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-  // Sync role if query parameter updates
-  useEffect(() => {
-    const r = searchParams.get("role");
-    if (r === "doctor" || r === "patient") {
-      setRole(r);
-    }
-  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -384,6 +374,14 @@ function RegisterForm() {
   );
 }
 
+function RegisterFormContent() {
+  const searchParams = useSearchParams();
+  const roleParam = searchParams.get("role");
+  const defaultRole: "patient" | "doctor" = roleParam === "doctor" ? "doctor" : "patient";
+
+  return <RegisterForm key={roleParam || "default"} defaultRole={defaultRole} />;
+}
+
 export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center px-4 py-12 selection:bg-[#CCFBF1] selection:text-[#0369A1]">
@@ -394,7 +392,7 @@ export default function RegisterPage() {
           </div>
         }
       >
-        <RegisterForm />
+        <RegisterFormContent />
       </Suspense>
     </div>
   );
