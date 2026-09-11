@@ -20,6 +20,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { roleHome } from "@/lib/auth";
+import { SPECIALTIES } from "@/lib/specialties";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,19 +34,6 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-const SPECIALTIES = [
-  "General Physician",
-  "Cardiologist",
-  "Dermatologist",
-  "Neurologist",
-  "Pediatrician",
-  "Orthopedic Surgeon",
-  "Psychiatrist",
-  "Gynecologist",
-  "Oncologist",
-  "ENT Specialist",
-];
-
 function RegisterForm({ defaultRole }: { defaultRole: "patient" | "doctor" }) {
   const router = useRouter();
 
@@ -52,7 +41,7 @@ function RegisterForm({ defaultRole }: { defaultRole: "patient" | "doctor" }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [specialty, setSpecialty] = useState(SPECIALTIES[0]);
+  const [specialty, setSpecialty] = useState<string>(SPECIALTIES[0]);
   const [hospital, setHospital] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -85,6 +74,7 @@ function RegisterForm({ defaultRole }: { defaultRole: "patient" | "doctor" }) {
         password,
         options: {
           data: metadata,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
@@ -95,9 +85,43 @@ function RegisterForm({ defaultRole }: { defaultRole: "patient" | "doctor" }) {
       }
 
       if (data?.user) {
-        // If session exists immediately, redirect to dashboard
+        // Profile is created via database trigger or we create it here
+        // Check if profile exists
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("id", data.user.id)
+          .maybeSingle();
+
+        if (!profile) {
+          await supabase.from("profiles").insert({
+            id: data.user.id,
+            role,
+            full_name: fullName,
+            phone: phone || null,
+          });
+        }
+
+        if (role === "doctor" && hospital) {
+          await supabase.from("doctor_profiles").upsert({
+            profile_id: data.user.id,
+            specialty,
+            hospital: hospital || null,
+            availability_slots: [],
+            rating: 0,
+          });
+        } else if (role === "doctor") {
+          await supabase.from("doctor_profiles").upsert({
+            profile_id: data.user.id,
+            specialty,
+            hospital: null,
+            availability_slots: [],
+            rating: 0,
+          });
+        }
+
         if (data.session) {
-          router.push("/dashboard");
+          router.push(roleHome(role));
           router.refresh();
           return;
         }

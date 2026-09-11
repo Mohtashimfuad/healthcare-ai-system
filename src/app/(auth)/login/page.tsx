@@ -16,6 +16,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { roleHome } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,20 +57,37 @@ function LoginForm({ defaultRole }: { defaultRole: "patient" | "doctor" }) {
       }
 
       if (data?.user) {
-        // Verify role in user profile or metadata
+        // Check if profile exists, if not create it with the selected role
         const { data: profile } = await supabase
           .from("profiles")
-          .select("*")
+          .select("role")
           .eq("id", data.user.id)
           .maybeSingle();
 
-        const userRole =
-          (profile as { role?: string } | null)?.role ||
-          (data.user.user_metadata?.role as string) ||
-          role;
+        let userRole = profile?.role;
 
-        // Redirect based on resolved role
-        router.push(userRole === "doctor" ? "/dashboard?role=doctor" : "/dashboard");
+        if (!userRole) {
+          // Create profile with the role from the form
+          await supabase.from("profiles").insert({
+            id: data.user.id,
+            role,
+            full_name: data.user.user_metadata?.full_name || email.split("@")[0],
+            phone: data.user.user_metadata?.phone || null,
+          });
+          userRole = role;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const redirectTo = params.get("redirectTo");
+        const safeRedirect =
+          redirectTo &&
+          (redirectTo.startsWith("/patient") ||
+            redirectTo.startsWith("/doctor") ||
+            redirectTo.startsWith("/dashboard"))
+            ? redirectTo
+            : roleHome(userRole);
+
+        router.push(safeRedirect);
         router.refresh();
       }
     } catch (err: unknown) {
@@ -250,7 +268,16 @@ function LoginFormContent() {
   const roleParam = searchParams.get("role");
   const defaultRole: "patient" | "doctor" = roleParam === "doctor" ? "doctor" : "patient";
 
-  return <LoginForm key={roleParam || "default"} defaultRole={defaultRole} />;
+  return (
+    <>
+      {searchParams.get("error") ? (
+        <p className="mb-4 max-w-md text-center text-sm text-[#EF4444]">
+          Sign-in could not be completed. Try again or create a new account.
+        </p>
+      ) : null}
+      <LoginForm key={roleParam || "default"} defaultRole={defaultRole} />
+    </>
+  );
 }
 
 export default function LoginPage() {

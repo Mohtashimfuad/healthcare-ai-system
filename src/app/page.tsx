@@ -14,6 +14,7 @@ import {
   HeartPulse,
   CheckCircle2,
   Users,
+  Lock,
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -434,6 +435,86 @@ export default function LandingPage() {
                 Access Doctor Portal
                 <ChevronRight className="w-4 h-4" />
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SPECIALTIES
+      ───────────────────────────────────────────────────────────── */}
+      <section id="specialties" className="py-20 bg-[#F8FAFC] border-t border-[#E2E8F0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#0EA5E9] mb-3">
+              Specialists
+            </h2>
+            <p className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
+              Book by medical specialty
+            </p>
+            <p className="mt-4 text-base text-[#64748B]">
+              Patients match with certified doctors across common clinical areas — then schedule
+              online or in-person visits.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              "General Physician",
+              "Cardiologist",
+              "Dermatologist",
+              "Neurologist",
+              "Pediatrician",
+              "Orthopedic Surgeon",
+              "Psychiatrist",
+              "Gynecologist",
+              "Oncologist",
+              "ENT Specialist",
+            ].map((specialty) => (
+              <span
+                key={specialty}
+                className="rounded-full border border-[#E2E8F0] bg-white px-4 py-2 text-sm font-medium text-[#0F172A] shadow-sm"
+              >
+                {specialty}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SECURITY
+      ───────────────────────────────────────────────────────────── */}
+      <section id="security" className="py-20 bg-white border-t border-[#E2E8F0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#14B8A6] mb-3">
+              Security
+            </h2>
+            <p className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
+              Records stay private by design
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-6">
+              <ShieldCheck className="w-8 h-8 text-[#14B8A6] mb-4" />
+              <h3 className="text-lg font-bold mb-2">Role-based access</h3>
+              <p className="text-sm text-[#64748B]">
+                Patients and doctors land in separate dashboards. Middleware blocks cross-role routes.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-6">
+              <Lock className="w-8 h-8 text-[#0EA5E9] mb-4" />
+              <h3 className="text-lg font-bold mb-2">Row-level security</h3>
+              <p className="text-sm text-[#64748B]">
+                Supabase RLS limits lab reports, prescriptions, and reminders to the people involved.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-6">
+              <HeartPulse className="w-8 h-8 text-[#0369A1] mb-4" />
+              <h3 className="text-lg font-bold mb-2">Doctor-in-the-loop AI</h3>
+              <p className="text-sm text-[#64748B]">
+                Medicine suggestions are drafts until a licensed clinician reviews and approves them.
+              </p>
             </div>
           </div>
         </div>
