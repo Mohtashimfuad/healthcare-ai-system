@@ -2,7 +2,6 @@ import { format, parseISO } from "date-fns";
 import { Bot, Calendar, Stethoscope, Users, Plus, ArrowRight } from "lucide-react";
 import { requireProfile } from "@/lib/supabase/profile";
 import { createClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,

@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { requireProfile } from "@/lib/supabase/profile";
 import { createClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -77,7 +76,7 @@ export default async function PatientDashboardPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild>
-            <Link href="/patient#appointments">
+            <Link href="/patient/appointments/book">
               <Plus className="w-4 h-4 mr-2" />
               Book Appointment
             </Link>
@@ -114,17 +113,17 @@ export default async function PatientDashboardPage() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <QuickActionCard
-          href="/patient#appointments"
+          href="/patient/appointments/book"
           icon={<Calendar className="size-5" />}
           title="Book appointment"
           description="Match with a specialist by availability."
           color="primary"
         />
         <QuickActionCard
-          href="/patient#prescriptions"
+          href="/patient/ai-suggest"
           icon={<Bot className="size-5" />}
           title="AI medicine suggestion"
-          description="Coming next: report-based AI drafts."
+          description="Describe symptoms and get AI-powered medicine drafts."
           color="accent"
         />
         <QuickActionCard
@@ -165,8 +164,8 @@ export default async function PatientDashboardPage() {
               <EmptyState
                 icon={<Calendar className="size-6" />}
                 title="No appointments yet"
-                description="Booking by specialty and availability is the next feature we will add."
-                action={{ label: "Book your first visit", href: "/patient#appointments" }}
+                description="Book your first visit and start managing your care in one place."
+                action={{ label: "Book your first visit", href: "/patient/appointments/book" }}
               />
             )}
           </CardContent>

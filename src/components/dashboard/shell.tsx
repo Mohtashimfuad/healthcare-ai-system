@@ -9,13 +9,9 @@ import {
   HeartPulse,
   LayoutDashboard,
   MapPin,
-  Stethoscope,
   User,
-  ChevronDown,
-  LogOut,
 } from "lucide-react";
 import type { Profile } from "@/types";
-import { Badge } from "@/components/ui/badge";
 import { SignOutButton } from "@/components/dashboard/sign-out-button";
 import { UserAvatar, RoleBadge } from "@/components/ui/user-avatar";
 import { Button } from "@/components/ui/button";
@@ -26,14 +22,13 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const PATIENT_NAV = [
   { href: "/patient", label: "Overview", icon: LayoutDashboard },
-  { href: "/patient#appointments", label: "Appointments", icon: Calendar },
-  { href: "/patient#prescriptions", label: "Prescriptions", icon: Bot },
+  { href: "/patient/appointments/book", label: "Book Appointment", icon: Calendar },
+  { href: "/patient/ai-suggest", label: "AI Suggest", icon: Bot },
   { href: "/patient#reminders", label: "Reminders", icon: Bell },
-  { href: "/patient#doctors", label: "Find doctors", icon: MapPin },
+  { href: "/patient#doctors", label: "Find Doctors", icon: MapPin },
 ];
 
 const DOCTOR_NAV = [
